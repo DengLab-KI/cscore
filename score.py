@@ -10,11 +10,11 @@ import argparse
 parser = argparse.ArgumentParser()
 
 parser.add_argument('-i','--input_folder', action='store', dest='input_folder', help='the path contains the comparison stats files')
-parser.add_argument('-i','--mode', action='store', dest='input_folder', help='the path contains the comparison stats files')
 parser.add_argument('-a','--comp1_file', action='store', dest='comp1_file', help='first comparison file')
 parser.add_argument('-b','--comp2_file', action='store', dest='comp2_file', help='second comparison file')
 parser.add_argument('-o','--output_file', action='store', dest='output_file', help='output file, each row assigned with a c-score, a p-value, and a sense field. If the mode is gene, then also with a pc filed indicating whether a gene (row) is protein-coding.')
 parser.add_argument("-m", "--mode", choices=['gene,pathway'], dest='mode', default ='gene')
+parser.add_argument('-g','--gtf', action='store', dest='gtf_file', help='gene annotation gtf for protein-coding annotation')
 
 paras = parser.parse_args()
 
@@ -22,14 +22,12 @@ comp1_file = paras.comp1_file
 comp2_file = paras.comp2_file
 output_file = paras.output_file
 mode = paras.mode
+gtf_file = paras.gtf_file
 
 # make a summary list of coding genes
 # in the hope of increasing the significance of the pathways
 
-DATA_PATH = pkg_resources.resource_filename('cscore', 'data/')
-GTF_FILE = pkg_resources.resource_filename('cscore', 'data/gencode_v42.gtf')
-
-gencode = pd.read_table(GTF_FILE, comment="#",
+gencode = pd.read_table(gtf_file, comment="#",
                         sep="\t", names=['seqname', 'source', 'feature', 'start', 'end', 'score', 'strand', 'frame', 'attribute'])
 
 gencode_genes = gencode[(gencode.feature == "transcript")][[
