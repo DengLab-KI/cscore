@@ -13,13 +13,13 @@ parser.add_argument('-i','--input_folder', action='store', dest='input_folder', 
 parser.add_argument('-a','--comp1_file', action='store', dest='comp1_file', help='first comparison file')
 parser.add_argument('-b','--comp2_file', action='store', dest='comp2_file', help='second comparison file')
 parser.add_argument('-o','--output_file', action='store', dest='output_file', help='output file, each row assigned with a c-score, a p-value, and a sense field. If the mode is gene, then also with a pc filed indicating whether a gene (row) is protein-coding.')
-parser.add_argument("-m", "--mode", choices=['gene,pathway'], dest='mode', default ='gene')
+parser.add_argument("-m", "--mode", choices=['gene','pathway'], dest='mode', default ='gene')
 parser.add_argument('-g','--gtf', action='store', dest='gtf_file', help='gene annotation gtf for protein-coding annotation')
 
 paras = parser.parse_args()
 
-comp1_file = paras.comp1_file
-comp2_file = paras.comp2_file
+comp1_file = os.path.join(paras.input_folder, paras.comp1_file)
+comp2_file = os.path.join(paras.input_folder, paras.comp2_file)
 output_file = paras.output_file
 mode = paras.mode
 gtf_file = paras.gtf_file
@@ -70,8 +70,8 @@ def shuffle_calc(step, comp1_np, comp2_np):
     return permutation_score
 
 if __name__ == '__main__':
-    comp1 = pd.read_csv(comp1_file, sep='\t')
-    comp2 = pd.read_csv(comp2_file, sep='\t')
+    comp1 = pd.read_csv(comp1_file, sep=';', decimal=',')
+    comp2 = pd.read_csv(comp2_file, sep=';', decimal=',')
     rows_keep = np.intersect1d(comp1['Unnamed: 0'], comp2['Unnamed: 0'])
 ## same genes and same order
     comp1 = comp1[comp1['Unnamed: 0'].isin(rows_keep)]
@@ -106,8 +106,8 @@ if __name__ == '__main__':
         k = comp1_np.shape[0]**2
     else:
         k = 40000
-    pocomp2 = multiprocessing.Pocomp2(64)
-    permutation_scores = np.vstack(pocomp2.starmap(shuffle_calc, zip(range(0, int(k)), repeat(comp1_np), repeat(comp2_np))))
+    pool = multiprocessing.Pool(64)
+    permutation_scores = np.vstack(pool.starmap(shuffle_calc, zip(range(0, int(k)), repeat(comp1_np), repeat(comp2_np))))
     scores_all = np.vstack((scores_notzero, permutation_scores))
 ## the p-value is the proportion of the permutation scores that are more extreme than the original score
 ## these fcomp2lowing calculation should be row-wise
