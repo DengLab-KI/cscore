@@ -70,7 +70,7 @@ def shuffle_calc(step, comp1_np, comp2_np):
     permutation_score = score(comp1_shuffle, comp2_shuffle)
     return permutation_score
 
-if __name__ == '__main__':
+def calc_score():
     comp1 = pd.read_csv(comp1_file, sep='\t', decimal='.')
     comp2 = pd.read_csv(comp2_file, sep='\t', decimal='.')
     comp1 = comp1.dropna()
@@ -147,3 +147,7 @@ if __name__ == '__main__':
         df_comp1_comp2['coding'] = df_comp1_comp2[gname].isin(pc_gene_set)
 
     df_comp1_comp2.to_csv(output_file, index=False, float_format="%.64f", sep='\t')
+
+
+if __name__ == '__main__':
+    calc_score()
