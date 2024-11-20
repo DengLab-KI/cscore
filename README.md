@@ -96,7 +96,7 @@ Distribution of the observed C-score, see below the visualization:
 
 ![image.png](img/result_image_1.png)
 
-![image.png]img/result_image_2.png)
+![image.png](img/result_image_2.png)
 
 ## Testing with the public bulk RNA-seq study
 
