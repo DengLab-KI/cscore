@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cscore"
+version = "0.1.0"
+description = "Compute C-scores and permutation-based significance for paired comparisons"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Your Name" }]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+dependencies = [
+  "pandas>=1.5",
+  "numpy>=1.23",
+  "scikit-learn>=1.1",
+  "joblib>=1.2",
+]
+
+[project.scripts]
+cscore = "cscore.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["cscore"]
+
+

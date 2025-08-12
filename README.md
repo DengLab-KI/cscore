@@ -1,12 +1,77 @@
 # C-score
 
-score.py is a standalone script.  
+Install the CLI and run it on your data.
 
-use python score.py -h to see the parameter set.  
+## Install with uv (from GitHub)
 
-## Study design and results of the study
+```bash
+uv venv && source .venv/bin/activate
+uv pip install git+https://github.com/brainfo/cscore
+```
 
-We analyzed single-nucleus RNA-seq data from placentas of normal-weight women (Control), and women with obesity who were further divided by fetal birth weight into appropriate- (O-A) and large-for-gestational age (O-L) groups.
+## Usage
+
+```bash
+cscore -i testdata \
+  -a GSE237099_1_unloading_reloading_cscore.txt \
+  -b GSE237099_1_unloading_reloading_cscore_sign.txt \
+  -o out.tsv
+```
+
+Specify a key column if your ID column is not the first column:
+
+```bash
+cscore -i testdata -a fileA.tsv -b fileB.tsv -o out.tsv -n gene_key
+```
+
+### Bulk RNA-seq (DESeq2) example
+
+```bash
+cscore -i testdata \
+  -a GSE237099_1_unloading_reloading_Reloading_vs_Control_deseq2.txt \
+  -b GSE237099_1_unloading_reloading_Unloading_vs_Control_deseq2.txt \
+  -o out_bulk.tsv \
+  -n ensembl_gene_id \
+  -e log2FoldChange \
+  -f padj
+```
+
+See `cscore -h` for all options. The legacy script `score.py` remains as a shim and will invoke the same CLI.
+
+### Column names
+- Default effect column: `avg_log2FC` (single-cell). Common alternatives auto-detected when not specified: `log2FoldChange`, `logFC`, `avg_logFC`.
+- Default FDR column: `p_val_adj`. Alternatives auto-detected when not specified: `padj`, `FDR`, `q_value`.
+- If you pass `-e/--effect` or `-f/--fdr`, those exact columns (case-insensitive) are required. Otherwise, the tool tries common variants and prints a warning only when it falls back.
+
+### Output
+The output TSV includes:
+- `score`: C-score (positive = common direction; negative = divergent)
+- `p`: permutation p-value for commonness/divergence
+- `q_value`: Benjamini–Hochberg adjusted p-value across rows
+- `convergence`: "high" when commonness dominates, "low" otherwise
+- All columns from both inputs, suffixed with `_comp1`/`_comp2`
+- `coding` (when `-g/--gtf` is provided and `-m gene`): boolean protein-coding annotation
+
+### Options
+- `-i, --input_folder`: Directory containing the two input TSV files
+- `-a, --comp1_file`: First comparison TSV
+- `-b, --comp2_file`: Second comparison TSV
+- `-o, --output_file`: Output TSV path
+- `-n, --gname`: Key column name (defaults to first column if omitted; warns what was used)
+- `-e, --effect`: Effect size column (default `avg_log2FC`; accepts `log2FoldChange`, etc.)
+- `-f, --fdr`: Adjusted p-value/FDR column (default `p_val_adj`; accepts `padj`, etc.)
+- `-g, --gtf`: Gene annotation GTF for protein-coding annotation (mode `gene`)
+- `-w, --workers`: Number of parallel workers (defaults to CPU count)
+- `-s, --seed`: Random seed for permutations
+
+### Performance
+- Permutations: uses `n^2` if `n < 200`, else `40000` shuffles.
+- Parallelization: batched permutations via joblib. Increase `-w` to speed up.
+- Memory: aggregation avoids storing all permutations.
+
+## Example preprint
+
+In [Decoding human placental cellular and molecular responses to obesity and fetal growth](https://www.biorxiv.org/content/10.1101/2025.01.27.634981v3.abstract), we analyzed single-nucleus RNA-seq data from placentas of normal-weight women (Control), and women with obesity who were further divided by fetal birth weight into appropriate- (O-A) and large-for-gestational age (O-L) groups.
 
 (With the C-scoring), → the following (aimed) results:
 
