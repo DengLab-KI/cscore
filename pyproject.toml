@@ -20,12 +20,13 @@ dependencies = [
   "numpy>=1.23",
   "scikit-learn>=1.1",
   "joblib>=1.2",
+  "matplotlib>=3.9.4",
 ]
 
 [project.scripts]
 cscore = "cscore.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["cscore"]
+include = ["cscore*"]
 
 
