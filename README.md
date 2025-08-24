@@ -1,11 +1,13 @@
 # C-score
 
-Install the CLI and run it on your data.
+Scoring the common and divergence of two comparisons of gene expression.
+
+
 
 ## Install with uv (from GitHub)
 
 ```bash
-uv venv && source .venv/bin/activate
+uv venv --python 3.12 && source .venv/bin/activate
 uv pip install git+https://github.com/brainfo/cscore
 ```
 
@@ -69,14 +71,6 @@ The output TSV includes:
 - Parallelization: batched permutations via joblib. Increase `-w` to speed up.
 - Memory: aggregation avoids storing all permutations.
 
-## Example preprint
-
-In [Decoding human placental cellular and molecular responses to obesity and fetal growth](https://www.biorxiv.org/content/10.1101/2025.01.27.634981v3.abstract), we analyzed single-nucleus RNA-seq data from placentas of normal-weight women (Control), and women with obesity who were further divided by fetal birth weight into appropriate- (O-A) and large-for-gestational age (O-L) groups.
-
-(With the C-scoring), → the following (aimed) results:
-
-We dissected the transcriptional responses in each placental cell type, identifying the **shared responses in O-A and O-L as common obesity responses** and **divergent responses in O-A or O-L groups as responses associated with (or modulated by) fetal overgrowth.**
-
 ## Score formula
 
 ![image.png](img/image.png)
@@ -101,9 +95,23 @@ We dissected the transcriptional responses in each placental cell type, identify
 
     GSEA based on fold changes,  FDR was controlled with Benjamini-Hochberg procedure.
 
-## Results
+### Simulation
 
-### Nuclei number and gene set size
+`n=10000, mu_fc1=0.0, mu_fc2=0.0, sd_fc=1.0, fdr_alpha=0.1, seed=1234`
+
+![sim_cscore_dist](misc/sim_hist.png)
+
+## Example preprint
+
+In [Decoding human placental cellular and molecular responses to obesity and fetal growth](https://www.biorxiv.org/content/10.1101/2025.01.27.634981v3.abstract), we analyzed single-nucleus RNA-seq data from placentas of normal-weight women (Control), and women with obesity who were further divided by fetal birth weight into appropriate- (O-A) and large-for-gestational age (O-L) groups.
+
+(With the C-scoring), → the following (aimed) results:
+
+We dissected the transcriptional responses in each placental cell type, identifying the **shared responses in O-A and O-L as common obesity responses** and **divergent responses in O-A or O-L groups as responses associated with (or modulated by) fetal overgrowth.**
+
+### Results
+
+#### Nuclei number and gene set size
 
 |  |  |  | Nuclei number | Common gene | Divergent gene |
 | --- | --- | --- | --- | --- | --- |
@@ -123,7 +131,7 @@ We dissected the transcriptional responses in each placental cell type, identify
 |  | O-L | female | 148 |  |  |
 |  |  | male | 460 |  |  |
 
-### Example table results
+#### Example table results
 
 Top 10 from mature STB:
 
@@ -157,12 +165,12 @@ Bottom 10 from mature STB:
 
 Distribution of the observed C-score, see below the visualization:
 
-### Visualization
+#### Visualization
 
 ![image.png](img/result_image_1.png)
 
 ![image.png](img/result_image_2.png)
 
-## Testing with the public bulk RNA-seq study
+### Testing with the public bulk RNA-seq study
 
 ![image.png](img/image_1.png)
