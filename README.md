@@ -87,13 +87,6 @@ The output TSV includes:
   - To measure the significance of the scores of the genes that were differentially expressed (score≠0), we performed a permutation test. The fold changes and FDRs of all these genes in each comparison were permutated 40,000 times if the number of genes with a score≠0 was over 200, otherwise, they are permutated (number of the genes)^2 times.
   - p-value = min(P(Score_perm>Score_obs), P(Score_perm<Score_obs))
   - if P(Score_perm>Score_obs) < P(Score_perm<Score_obs), then the sign is assigned as “high” commonness, otherwise, “low” commonness
-- The $C_{OA}$ and $C_{OL}$  pairwise differential gene expression test: NB regression model was used with the formula “~ 1 + group + sex + log_number_of_genes” on raw counts.
-
-    We performed differential expression analyses using a wald test with a negative binomial regression model was used with the formula “~ 1 + group + sex + log_number_of_genes” on raw counts. By default, in FindMarkers function in Seurat, genes with more than one count in at least 1% of cells were considered. This rendered 6,000 to 7,000 genes to be analyzed. FDR was controlled with Benjamini-Hochberg procedure.
-
-- The $C_{OA}$ and $C_{OL}$ gene set enrichment test
-
-    GSEA based on fold changes,  FDR was controlled with Benjamini-Hochberg procedure.
 
 ### Simulation
 
@@ -108,6 +101,16 @@ In [Decoding human placental cellular and molecular responses to obesity and fet
 (With the C-scoring), → the following (aimed) results:
 
 We dissected the transcriptional responses in each placental cell type, identifying the **shared responses in O-A and O-L as common obesity responses** and **divergent responses in O-A or O-L groups as responses associated with (or modulated by) fetal overgrowth.**
+
+Here, for the C-score:
+
+- The $C_{OA}$ and $C_{OL}$  pairwise differential gene expression test: NB regression model was used with the formula “~ 1 + group + sex + log_number_of_genes” on raw counts.
+
+    We performed differential expression analyses using a wald test with a negative binomial regression model was used with the formula “~ 1 + group + sex + log_number_of_genes” on raw counts. By default, in FindMarkers function in Seurat, genes with more than one count in at least 1% of cells were considered. This rendered 6,000 to 7,000 genes to be analyzed. FDR was controlled with Benjamini-Hochberg procedure.
+
+- The $C_{OA}$ and $C_{OL}$ gene set enrichment test
+
+    GSEA based on fold changes,  FDR was controlled with Benjamini-Hochberg procedure.
 
 ### Results
 
