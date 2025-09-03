@@ -15,8 +15,8 @@ uv pip install git+https://github.com/brainfo/cscore
 
 ```bash
 cscore -i testdata \
-  -a GSE237099_1_unloading_reloading_cscore.txt \
-  -b GSE237099_1_unloading_reloading_cscore_sign.txt \
+  -a GSE237099_1_unloading_reloading_Reloading_vs_Control_deseq2.txt \
+  -b GSE237099_1_unloading_reloading_Uneloading_vs_Control_deseq2.txt \
   -o out.tsv
 ```
 
