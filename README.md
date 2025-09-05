@@ -19,7 +19,7 @@ uv pip install git+https://github.com/denglab-ki/cscore
 uv pip install "git+https://github.com/denglab-ki/cscore[docs]"
 ```
 
-Then explore our **[Interactive Jupyter Notebook](https://denglab-ki.github.io/cscore/cscore_showcase/)** with detailed C-score examples!
+Then explore our **[Interactive Jupyter Notebook](https://denglab-ki.github.io/cscore/simulation/)** with detailed C-score examples!
 
 ## Usage
 
