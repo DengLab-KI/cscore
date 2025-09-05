@@ -1,0 +1,58 @@
+site_name: C-score Documentation
+site_description: C-score analysis tool - Examples and documentation
+repo_url: https://github.com/brainfo/cscore
+docs_dir: docs
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_root_heading: false
+            show_root_toc_entry: false
+            show_object_full_path: false
+            show_category_heading: false
+            members_order: alphabetical
+            show_signature_annotations: true
+            separate_signature: true
+            filters:
+              - "!^_"
+            heading_level: 3
+
+nav:
+  - Home: ../README.md
+  - Examples: examples.md
+
+
