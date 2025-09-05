@@ -6,7 +6,7 @@ Scoring the common and divergence of two comparisons of gene expression.
 
 
 
-## Install with uv (from GitHub)
+## Install with uv
 
 ```bash
 uv venv --python 3.12 && source .venv/bin/activate
