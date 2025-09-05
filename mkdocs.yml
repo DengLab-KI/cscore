@@ -1,4 +1,4 @@
-site_name: C-score running examples
+site_name: C-score examples
 site_description: Compare comparisons of gene expression - Examples
 repo_url: https://github.com/brainfo/cscore
 docs_dir: docs
@@ -57,4 +57,3 @@ plugins:
 
 nav:
   - Examples: examples.md
-  - Simulation: cscore_showcase.ipynb
