@@ -1,4 +1,4 @@
-# C-score 
+# Examples
 
 This page provides comprehensive examples of how to use `cscore` with simulations and real datasets.
 

@@ -55,5 +55,6 @@ plugins:
             heading_level: 3
 
 nav:
+  - Introduction: index.md
   - Examples: examples.md
   - Simulation: cscore_showcase.ipynb
