@@ -35,6 +35,10 @@ markdown_extensions:
 
 plugins:
   - search
+  - mkdocs-jupyter:
+      execute: false
+      include_source: true
+      theme: dark
   - mkdocstrings:
       handlers:
         python:
@@ -54,5 +58,7 @@ plugins:
 nav:
   - Home: ../README.md
   - Examples: examples.md
+  - Interactive Notebook: cscore_showcase.ipynb
+  - Showcase: ../examples/README.md
 
 
