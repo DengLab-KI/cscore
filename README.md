@@ -1,6 +1,6 @@
 # C-score
 
-[![Documentation](https://github.com/denglab-ki/cscore/actions/workflows/docs.yml/badge.svg)](https://denglab-ki.github.io/cscore/)
+[![Documentation](https://img.shields.io/website?down_color=red&down_message=offline&label=docs&logo=gitbook&logoColor=white&up_color=brightgreen&up_message=live&url=https%3A//denglab-ki.github.io/cscore/)](https://denglab-ki.github.io/cscore/)
 
 Scoring the common and divergence of two comparisons of gene expression.
 
