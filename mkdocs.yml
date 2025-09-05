@@ -57,4 +57,4 @@ plugins:
 nav:
   - Introduction: index.md
   - Examples: examples.md
-  - Simulation: cscore_showcase.ipynb
+  - Simulation: simulation.ipynb
