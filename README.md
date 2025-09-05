@@ -13,14 +13,6 @@ uv venv --python 3.12 && source .venv/bin/activate
 uv pip install git+https://github.com/denglab-ki/cscore
 ```
 
-### Install with Documentation Dependencies
-
-```bash
-uv pip install "git+https://github.com/denglab-ki/cscore[docs]"
-```
-
-Then explore our **[Interactive Jupyter Notebook](https://denglab-ki.github.io/cscore/simulation/)** with detailed C-score examples!
-
 ## Usage
 
 ```bash
