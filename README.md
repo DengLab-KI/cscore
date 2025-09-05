@@ -1,6 +1,6 @@
 # C-score
 
-[![Documentation](https://github.com/DengLab-KI/cscore/actions/workflows/docs.yml/badge.svg)](https://DengLab-KI.github.io/cscore/)
+[![Documentation](https://github.com/denglab-ki/cscore/actions/workflows/docs.yml/badge.svg)](https://denglab-ki.github.io/cscore/)
 
 Scoring the common and divergence of two comparisons of gene expression.
 
@@ -10,16 +10,16 @@ Scoring the common and divergence of two comparisons of gene expression.
 
 ```bash
 uv venv --python 3.12 && source .venv/bin/activate
-uv pip install git+https://github.com/brainfo/cscore
+uv pip install git+https://github.com/denglab-ki/cscore
 ```
 
 ### Install with Documentation Dependencies
 
 ```bash
-uv pip install "git+https://github.com/brainfo/cscore[docs]"
+uv pip install "git+https://github.com/denglab-ki/cscore[docs]"
 ```
 
-Then explore our **[Interactive Jupyter Notebook](https://brainfo.github.io/cscore/cscore_showcase/)** with detailed C-score examples!
+Then explore our **[Interactive Jupyter Notebook](https://denglab-ki.github.io/cscore/cscore_showcase/)** with detailed C-score examples!
 
 ## Usage
 
