@@ -4,7 +4,7 @@ This page provides comprehensive examples of how to use `cscore` with simulation
 
 ## Simulated scenarios
 
-**[→ Open Interactive Notebook](cscore_showcase.ipynb)**
+**[→ Open Interactive Notebook](simulation.ipynb)**
 
 The simulation demonstrates three fundamental scenarios:
 1. **Independent responses**: No relationship
