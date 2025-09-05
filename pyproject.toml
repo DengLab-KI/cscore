@@ -20,12 +20,26 @@ dependencies = [
   "numpy>=1.23",
   "scikit-learn>=1.1",
   "joblib>=1.2",
+  "matplotlib>=3.9.4",
+]
+
+[project.optional-dependencies]
+docs = [
+  "jupyter>=1.0.0",
+  "ipykernel>=6.0.0",
+  "notebook>=6.4.0",
+  "seaborn>=0.11.0",
+  "mkdocs>=1.4.0",
+  "mkdocs-material>=8.0.0",
+  "mkdocstrings[python]>=0.19.0",
+  "mkdocs-jupyter>=0.24.0",
+  "nbconvert>=7.0.0",
 ]
 
 [project.scripts]
 cscore = "cscore.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["cscore"]
+include = ["cscore*"]
 
 
