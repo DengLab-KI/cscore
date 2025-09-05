@@ -56,9 +56,5 @@ plugins:
             heading_level: 3
 
 nav:
-  - Home: ../README.md
   - Examples: examples.md
-  - Interactive Notebook: cscore_showcase.ipynb
-  - Showcase: ../examples/README.md
-
-
+  - Simulation: cscore_showcase.ipynb
