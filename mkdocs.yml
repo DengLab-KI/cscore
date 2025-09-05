@@ -1,5 +1,5 @@
-site_name: C-score examples
-site_description: Compare comparisons of gene expression - Examples
+site_name: C-score
+site_description: Compare comparisons of gene expression
 repo_url: https://github.com/brainfo/cscore
 docs_dir: docs
 
