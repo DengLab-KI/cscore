@@ -1,6 +1,6 @@
 # C-score
 
-[![Documentation](https://github.com/brainfo/cscore/actions/workflows/docs.yml/badge.svg)](https://brainfo.github.io/cscore/)
+[![Documentation](https://github.com/DengLab-KI/cscore/actions/workflows/docs.yml/badge.svg)](https://DengLab-KI.github.io/cscore/)
 
 Scoring the common and divergence of two comparisons of gene expression.
 
