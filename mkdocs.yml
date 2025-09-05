@@ -1,6 +1,6 @@
 site_name: C-score
 site_description: Compare comparisons of gene expression
-repo_url: https://github.com/brainfo/cscore
+repo_url: https://github.com/DengLab-KI/cscore
 docs_dir: docs
 
 theme:
