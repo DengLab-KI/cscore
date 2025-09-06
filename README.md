@@ -9,8 +9,7 @@ Scoring the common and divergence of two comparisons of gene expression.
 ## Install with uv
 
 ```bash
-uv venv --python 3.12 && source .venv/bin/activate
-uv pip install git+https://github.com/denglab-ki/cscore
+pip install git+https://github.com/denglab-ki/cscore
 ```
 
 ## Usage
