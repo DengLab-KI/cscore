@@ -76,10 +76,6 @@ You can use either the descriptive names (`linear`, `power`) or the short names 
 
 ---
 
-## Score formula
-
-![image.png](img/image.png)
-
 - Explanation
 
     ![image.png](img/result_image.png)
