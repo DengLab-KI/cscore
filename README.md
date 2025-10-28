@@ -6,7 +6,7 @@ Scoring the common and divergence of two comparisons of gene expression.
 
 
 
-## Install with uv
+## Install
 
 ```bash
 pip install git+https://github.com/denglab-ki/cscore
@@ -16,6 +16,13 @@ pip install git+https://github.com/denglab-ki/cscore
 
 ```bash
 cscore -i testdata -a fileA.tsv -b fileB.tsv -o out.tsv -n gene_key
+```
+
+To use a different ratio mode:
+```bash
+cscore -i testdata -a fileA.tsv -b fileB.tsv -o out.tsv -n gene_key --ratio-mode power
+# or equivalently:
+cscore -i testdata -a fileA.tsv -b fileB.tsv -o out.tsv -n gene_key --ratio-mode v1
 ```
 
 ### Input
@@ -43,8 +50,31 @@ The output TSV includes:
 - `-g, --gtf`: Gene annotation GTF for protein-coding annotation (mode `gene`)
 - `-w, --workers`: Number of parallel workers (defaults to CPU count)
 - `-s, --seed`: Random seed for permutations
+- `--ratio_mode`: Ratio calculation mode for same-direction genes (default `linear`; see **Ratio Modes** below)
 
 
+
+## Ratio Modes
+
+C-score provides two modes for calculating the ratio component when genes move in the same direction (both up-regulated or both down-regulated):
+
+### **`linear` (or `v2`) mode (default)**
+- **Formula**: `1 - |fc1 - fc2| / (max(|fc1|, |fc2|) + 1)`
+- **Behavior**: Linear penalty based on the disagreement between fold changes
+- **Use when**: You want a bounded score \[0, 1\] that decreases linearly as the fold changes diverge
+- **Example**: If fc1=2.0 and fc2=1.5, the ratio = 1 - 0.5/(2.0+1) ≈ 0.83
+
+### **`power` (or `v1`) mode**
+- **Formula**: `max(|fc1|, |fc2|) / (|fc1 - fc2| + 1)`
+- **Behavior**: Non-linear (hyperbolic) relationship that amplifies concordance
+- **Use when**: You want to more strongly reward genes with highly concordant fold changes
+- **Example**: If fc1=2.0 and fc2=1.5, the ratio = 2.0/(0.5+1) ≈ 1.33
+
+**Note**: For genes moving in opposite directions (one up, one down), both modes use the same formula: `-|fc1 - fc2| / (max(|fc1|, |fc2|) + 1)`, producing negative scores.
+
+You can use either the descriptive names (`linear`, `power`) or the short names (`v2`, `v1`) interchangeably.
+
+---
 
 ## Score formula
 

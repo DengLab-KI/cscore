@@ -19,6 +19,20 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("-g", "--gtf", dest="gtf_file", default=None, help="gene annotation GTF for protein-coding annotation")
     parser.add_argument("-w", "--workers", type=int, default=None, help="number of workers (currently used for future parallelism)")
     parser.add_argument("-s", "--seed", type=int, default=1234, help="random seed for permutations")
+    parser.add_argument("--no-winsorize", action="store_true", help="disable winsorization of C-score (overrides --winsorize-percentile)")
+    parser.add_argument(
+        "--winsorize-percentile",
+        type=float,
+        default=None,
+        help="percentile to cap same-direction scores; default 99.0 (ignored if --no-winsorize)",
+    )
+    parser.add_argument(
+        "--ratio-mode",
+        dest="ratio_mode",
+        choices=["linear", "v2", "power", "v1"],
+        default="linear",
+        help="ratio calculation mode for same-direction genes: 'linear'/'v2' (default, bounded [0,1]) or 'power'/'v1' (non-linear, amplifies concordance)",
+    )
     return parser
 
 
@@ -27,6 +41,15 @@ def main(argv: list[str] | None = None) -> None:
     args = parser.parse_args(argv)
 
     default_workers = args.workers if args.workers is not None else max(1, (os.cpu_count() or 1))
+
+    # Winsorization options
+    winsorize = not args.no_winsorize
+    if winsorize:
+        percentile = args.winsorize_percentile if args.winsorize_percentile is not None else 99.0
+        if not (0.0 < percentile <= 100.0):
+            parser.error("--winsorize-percentile must be in (0, 100].")
+    else:
+        percentile = 99.0  # value unused when winsorization is disabled
 
     cfg = CScoreConfig(
         input_folder=args.input_folder,
@@ -40,6 +63,9 @@ def main(argv: list[str] | None = None) -> None:
         gtf_file=args.gtf_file,
         workers=default_workers,
         seed=args.seed,
+        winsorize=winsorize,
+        winsorize_percentile=percentile,
+        ratio_mode=args.ratio_mode,
     )
 
     run_cscore(cfg)

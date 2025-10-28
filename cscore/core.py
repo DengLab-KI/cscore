@@ -18,24 +18,78 @@ def weight(fdr_values: np.ndarray) -> np.ndarray:
     return weights
 
 
-def ratio(fc_comp1: np.ndarray, fc_comp2: np.ndarray) -> np.ndarray:
+def ratio(fc_comp1: np.ndarray, fc_comp2: np.ndarray, ratio_mode: str = "linear") -> np.ndarray:
+    """Calculate ratio score for fold changes.
+    
+    Args:
+        fc_comp1: Fold change values from comparison 1
+        fc_comp2: Fold change values from comparison 2
+        ratio_mode: Mode for calculating same-direction ratio
+            - "power" or "v1": max_abs / (diff_abs + 1.0) - Non-linear, amplifies concordance
+            - "linear" or "v2": 1 - diff_abs / (max_abs + 1.0) - Linear penalty for disagreement
+    
+    Returns:
+        Array of ratio scores
+    """
     fc1 = np.asarray(fc_comp1, dtype=float)
     fc2 = np.asarray(fc_comp2, dtype=float)
     same_direction = fc1 * fc2 > 0
     max_abs = np.maximum(np.abs(fc1), np.abs(fc2))
     diff_abs = np.abs(fc1 - fc2)
-    pos_part = max_abs / (diff_abs + 1.0)
+    
+    if ratio_mode in ("power", "v1"):
+        pos_part = max_abs / (diff_abs + 1.0)
+    elif ratio_mode in ("linear", "v2"):
+        pos_part = 1 - diff_abs / (max_abs + 1.0)
+    else:
+        raise ValueError(f"Invalid ratio_mode: {ratio_mode}. Must be 'power'/'v1' or 'linear'/'v2'.")
+    
     neg_part = -diff_abs / (max_abs + 1.0)
     return np.where(same_direction, pos_part, neg_part)
 
 
-def compute_score(comp1_np: np.ndarray, comp2_np: np.ndarray) -> np.ndarray:
+def compute_score(comp1_np: np.ndarray, comp2_np: np.ndarray, ratio_mode: str = "linear") -> np.ndarray:
     fc1 = comp1_np[:, 0]
     fc2 = comp2_np[:, 0]
     w1 = weight(comp1_np[:, 1])
     w2 = weight(comp2_np[:, 1])
     magnitude = np.abs(fc1 * w1) + np.abs(fc2 * w2)
-    return magnitude * ratio(fc1, fc2)
+    return magnitude * ratio(fc1, fc2, ratio_mode=ratio_mode)
+
+
+def winsorize_cscore(scores: np.ndarray, fc1: np.ndarray, fc2: np.ndarray, percentile: float = 99.0) -> np.ndarray:
+    """
+    Winsorize cscore at the specified percentile when fc1 * fc2 > 0 (same direction).
+    
+    Args:
+        scores: Array of cscore values
+        fc1: Fold change values from comparison 1
+        fc2: Fold change values from comparison 2
+        percentile: Percentile for winsorization (default: 99.0)
+    
+    Returns:
+        Winsorized scores array
+    """
+    scores = np.asarray(scores, dtype=float)
+    fc1 = np.asarray(fc1, dtype=float)
+    fc2 = np.asarray(fc2, dtype=float)
+    
+    # Identify genes where fc1 and fc2 have the same direction
+    same_direction = fc1 * fc2 > 0
+    
+    if not np.any(same_direction):
+        # No genes with same direction, return original scores
+        return scores
+    
+    # Calculate the percentile threshold for same-direction genes only
+    same_direction_scores = scores[same_direction]
+    threshold = np.percentile(same_direction_scores, percentile)
+    
+    # Apply winsorization: cap values at the threshold for same-direction genes
+    winsorized_scores = scores.copy()
+    winsorized_scores[same_direction] = np.minimum(same_direction_scores, threshold)
+    
+    return winsorized_scores
 
 
 def _permute_rows_sklearn(array: np.ndarray, random_state: int) -> np.ndarray:
@@ -49,6 +103,7 @@ def compute_pvalues(
     num_permutations: int,
     seed: Optional[int] = None,
     workers: int = 1,
+    ratio_mode: str = "linear",
 ) -> Tuple[np.ndarray, list[str]]:
     """Compute permutation p-values.
 
@@ -64,7 +119,7 @@ def compute_pvalues(
             step_seed = start_seed + j
             perm1 = _permute_rows_sklearn(comp1_np, random_state=step_seed)
             perm2 = _permute_rows_sklearn(comp2_np, random_state=step_seed + 40000)
-            perm_scores = compute_score(perm1, perm2)
+            perm_scores = compute_score(perm1, perm2, ratio_mode=ratio_mode)
             counts += (perm_scores > observed_scores).astype(np.int64)
         return counts
 
@@ -113,15 +168,39 @@ class CScoreConfig:
     fdr: Optional[str] = "p_val_adj"
     gtf_file: Optional[str] = None
     workers: int = max(1, (os.cpu_count() or 1))
-    seed: Optional[int] = 1234
-
+    seed: Optional[int] = 404
+    winsorize: bool = True
+    winsorize_percentile: float = 99.0
+    ratio_mode: str = "linear"
 
 def run_cscore(cfg: CScoreConfig) -> None:
     comp1_path = os.path.join(cfg.input_folder, cfg.comp1_file)
     comp2_path = os.path.join(cfg.input_folder, cfg.comp2_file)
 
-    comp1 = pd.read_csv(comp1_path, sep="\t", decimal=".").dropna()
-    comp2 = pd.read_csv(comp2_path, sep="\t", decimal=".").dropna()
+    # Try to detect separator and read files
+    def read_comparison_file(file_path):
+        # First try with semicolon separator (for manuscript data)
+        try:
+            df = pd.read_csv(file_path, sep=";", decimal=",", quotechar='"').dropna()
+            # If successful and has multiple columns, use it
+            if df.shape[1] > 1:
+                return df
+        except:
+            pass
+        
+        # Fall back to tab separator
+        try:
+            df = pd.read_csv(file_path, sep="\t", decimal=".").dropna()
+            return df
+        except:
+            pass
+            
+        # Last resort: try comma separator
+        df = pd.read_csv(file_path, sep=",", decimal=".").dropna()
+        return df
+    
+    comp1 = read_comparison_file(comp1_path)
+    comp2 = read_comparison_file(comp2_path)
 
     # Normalize column names: strip whitespace and BOMs
     def _normalize_cols(df: pd.DataFrame) -> pd.DataFrame:
@@ -219,7 +298,14 @@ def run_cscore(cfg: CScoreConfig) -> None:
     comp1_np = comp1[[comp1_effect, comp1_fdr]].to_numpy(dtype=float)
     comp2_np = comp2[[comp2_effect, comp2_fdr]].to_numpy(dtype=float)
 
-    scores = compute_score(comp1_np, comp2_np)
+    scores = compute_score(comp1_np, comp2_np, ratio_mode=cfg.ratio_mode)
+    
+    # Optionally apply winsorization for same-direction genes (fc1 * fc2 > 0)
+    fc1 = comp1_np[:, 0]
+    fc2 = comp2_np[:, 0]
+    if cfg.winsorize:
+        scores = winsorize_cscore(scores, fc1, fc2, percentile=cfg.winsorize_percentile)
+    
     keep_mask = scores != 0
     comp1 = comp1.loc[keep_mask]
     comp2 = comp2.loc[keep_mask]
@@ -231,7 +317,7 @@ def run_cscore(cfg: CScoreConfig) -> None:
     n = comp1_np.shape[0]
     num_permutations = n * n if n < 200 else 40000
     pvals, sense = compute_pvalues(
-        comp1_np, comp2_np, scores, num_permutations=num_permutations, seed=cfg.seed, workers=cfg.workers
+        comp1_np, comp2_np, scores, num_permutations=num_permutations, seed=cfg.seed, workers=cfg.workers, ratio_mode=cfg.ratio_mode
     )
 
     merged = pd.merge(comp1, comp2, on=merge_key, suffixes=("_comp1", "_comp2"))
