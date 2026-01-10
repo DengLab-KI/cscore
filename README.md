@@ -72,8 +72,6 @@ C-score provides two modes for calculating the ratio component when genes move i
 
 **Note**: For genes moving in opposite directions (one up, one down), both modes use the same formula: `-|fc1 - fc2| / (max(|fc1|, |fc2|) + 1)`, producing negative scores.
 
-You can use either the descriptive names (`linear`, `power`) or the short names (`v2`, `v1`) interchangeably.
-
 ---
 
 - Explanation
